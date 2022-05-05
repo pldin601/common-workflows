@@ -5,10 +5,12 @@ on:
     inputs:
       DOCKERHUB_IMAGE:
         type: string
-        required: true
+        required: false
+        default: ${{ github.repository }}
       REPOSITORY_URL:
         type: string
-        required: true
+        required: false
+        default: https://github.com/${{ github.repository }}.git
       CHECKOUT:
         type: string
         required: false
@@ -119,7 +121,7 @@ jobs:
       PUBLIC_IP: ${{ matrix.PUBLIC_IP }}
       REPOSITORY_URL: ${{ inputs.REPOSITORY_URL }}
       CHECKOUT: ${{ inputs.CHECKOUT }}
-      DOCKERHUB_IMAGE: ${{ secrets.DOCKERHUB_IMAGE }}
+      DOCKERHUB_IMAGE: ${{ inputs.DOCKERHUB_IMAGE }}
       IMAGE_TAG: ${{ needs.get-image-tag.outputs.image_tag }}
     steps:
       -
