@@ -47,7 +47,7 @@ resource "tls_private_key" "builder_key" {
 }
 
 resource "aws_key_pair" "spot_key" {
-  key_name   = "torrent-bot-spot-key"
+  key_name   = var.aws_ec2_key_pair_name
   public_key = tls_private_key.builder_key.public_key_openssh
 }
 
