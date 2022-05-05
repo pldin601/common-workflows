@@ -27,6 +27,9 @@ concurrency:
   cancel-in-progress: false
   group: run-on-spot
 
+env:
+  TERRAFORM_DIR: terraform/build-multiarch-on-aws-spots
+
 jobs:
   get-image-tag:
     name: Get image tag
@@ -67,24 +70,24 @@ jobs:
           terraform_wrapper: false
       -
         name: "Terraform: Init"
-        run: terraform -chdir=terraform init
+        run: terraform -chdir=$TERRAFORM_DIR init
       -
         name: "Terraform: Apply"
-        run: terraform -chdir=terraform apply -auto-approve
+        run: terraform -chdir=$TERRAFORM_DIR apply -auto-approve
       -
         name: "Save Terraform State File"
         if: ${{ always() }}
         uses: actions/upload-artifact@v2
         with:
           name: terraform-state
-          path: terraform/terraform.tfstate
+          path: ${{ env.TERRAFORM_DIR }}/terraform.tfstate
           retention-days: 1
       -
         id: outputs
         name: "Terraform: Parse Outputs"
         run: |
-          PRIVATE_KEY=$(terraform -chdir=terraform output private_key)
-          PUBLIC_IPS=$(terraform -chdir=terraform output --json public_ips)
+          PRIVATE_KEY=$(terraform -chdir=$TERRAFORM_DIR output private_key)
+          PUBLIC_IPS=$(terraform -chdir=$TERRAFORM_DIR output --json public_ips)
 
           echo "PRIVATE_KEY<<EOF" >> $GITHUB_ENV
           echo "$PRIVATE_KEY" >> $GITHUB_ENV
@@ -200,7 +203,7 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: terraform-state
-          path: terraform
+          path: ${{ env.TERRAFORM_DIR }}
       -
         name: "Terraform: Setup"
         uses: hashicorp/setup-terraform@v1
@@ -209,7 +212,7 @@ jobs:
           terraform_wrapper: false
       -
         name: "Terraform: Init"
-        run: terraform -chdir=terraform init
+        run: terraform -chdir=$TERRAFORM_DIR init
       -
         name: "Terraform: Destroy"
-        run: terraform -chdir=terraform destroy -auto-approve
+        run: terraform -chdir=$TERRAFORM_DIR destroy -auto-approve
