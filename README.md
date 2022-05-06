@@ -12,8 +12,6 @@ on: [workflow_dispatch]
 
 jobs:
   build:
-    needs:
-      - get-image-tag
     name: Build
     uses: pldin601/common-workflows/.github/workflows/build-multiarch-on-aws-spots.yml@setup-spots
     with:
