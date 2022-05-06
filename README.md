@@ -13,7 +13,7 @@ on: [workflow_dispatch]
 jobs:
   build:
     name: Build
-    uses: pldin601/common-workflows/.github/workflows/build-multiarch-on-aws-spots.yml@setup-spots
+    uses: pldin601/common-workflows/.github/workflows/build-multiarch-on-aws-spots.yml@main
     with:
       DOCKER_IMAGE_TAG: latest
     secrets:
