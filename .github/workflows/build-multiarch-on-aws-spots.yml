@@ -136,10 +136,10 @@ jobs:
         run: ssh spot "mkdir ~/code && git clone \"$REPOSITORY_URL\" ~/code && cd ~/code && git checkout \"$CHECKOUT\""
       -
         name: Build docker image on spot instance
-        run: ssh spot "sudo docker build -t \"$IMAGE_NAME:$IMAGE_TAG-"'$(dpkg-architecture -q DEB_BUILD_ARCH)'"\" ~/code"
+        run: ssh spot "sudo docker build -t \"$IMAGE_NAME:$IMAGE_TAG-"'$(dpkg --print-architecture)'"\" ~/code"
       -
         name: Push docker image from spot instance
-        run: ssh spot "sudo docker push \"$IMAGE_NAME:$IMAGE_TAG-"'$(dpkg-architecture -q DEB_BUILD_ARCH)'"\""
+        run: ssh spot "sudo docker push \"$IMAGE_NAME:$IMAGE_TAG-"'$(dpkg --print-architecture)'"\""
 
   manifest:
     name: Create and push multi-arch manifest
