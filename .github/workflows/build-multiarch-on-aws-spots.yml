@@ -1,4 +1,4 @@
-name: Build multi-arch (amd64/arm64) docker image using AWS spot instances
+name: Build multi-arch docker image using AWS spot instances
 
 on:
   workflow_call:
@@ -26,7 +26,7 @@ on:
       WORKFLOW_CHECKOUT:
         type: string
         required: false
-        default: v1.0.1
+        default: main
     secrets:
       AWS_ACCESS_KEY_ID:
         required: true
@@ -136,10 +136,10 @@ jobs:
         run: ssh spot "mkdir ~/code && git clone \"$REPOSITORY_URL\" ~/code && cd ~/code && git checkout \"$CHECKOUT\""
       -
         name: Build docker image on spot instance
-        run: ssh spot "sudo docker build -t \"$IMAGE_NAME-"'$(arch)'":$IMAGE_TAG\" ~/code"
+        run: ssh spot "sudo docker build -t \"$IMAGE_NAME:$IMAGE_TAG-"'$(arch)'"\" ~/code"
       -
         name: Push docker image from spot instance
-        run: ssh spot "sudo docker push \"$IMAGE_NAME-"'$(arch)'":$IMAGE_TAG\""
+        run: ssh spot "sudo docker push \"$IMAGE_NAME:$IMAGE_TAG-"'$(arch)'"\""
 
   manifest:
     name: Create and push multi-arch manifest
@@ -174,7 +174,7 @@ jobs:
       -
         name: Create multi-arch docker manifest
         # @todo Take x86_64 and aarch64 as variables from previous steps
-        run: ssh spot "sudo docker manifest create \"$IMAGE_NAME:$IMAGE_TAG\" --amend \"$IMAGE_NAME-x86_64:$IMAGE_TAG\" --amend \"$IMAGE_NAME-aarch64:$IMAGE_TAG\""
+        run: ssh spot "sudo docker manifest create \"$IMAGE_NAME:$IMAGE_TAG\" --amend \"$IMAGE_NAME:$IMAGE_TAG-x86_64\" --amend \"$IMAGE_NAME:$IMAGE_TAG-aarch64\""
       -
         name: Push docker manifest
         run: ssh spot "sudo docker manifest push \"$IMAGE_NAME:$IMAGE_TAG\""
