@@ -11,6 +11,10 @@ on:
         type: string
         required: false
         default: latest
+      DOCKER_PUSH_LATEST_TAG:
+        type: boolean
+        required: false
+        default: false
       REPOSITORY_URL:
         type: string
         required: false
@@ -178,6 +182,10 @@ jobs:
       -
         name: Push docker manifest
         run: ssh spot "sudo docker manifest push \"$IMAGE_NAME:$IMAGE_TAG\""
+      -
+        if: ${{ inputs.DOCKER_PUSH_LATEST_TAG }}
+        name: Push latest tag
+        run: ssh spot "sudo docker tag \"$IMAGE_NAME:$IMAGE_TAG\" \"$IMAGE_NAME:latest\" && sudo docker push \"$IMAGE_NAME:latest\""
 
   destroy-spots:
     name: Destroy spot machines
