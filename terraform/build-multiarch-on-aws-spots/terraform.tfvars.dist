@@ -1,3 +1,4 @@
 docker_login = "CHANGE_ME"
 docker_password = "CHANGE_ME"
 aws_ec2_key_pair_name = "CHANGE_ME"
+aws_region = "eu-central-1"
